@@ -33313,10 +33313,9 @@ var Shape = exports.Shape = /*#__PURE__*/function () {
     if (data.sprite == null) {
       throw new Error("Can't instantiate shape without sprite");
     }
-    console.log(data.x);
     this.id = data.id || new Date().getTime();
-    this.width = data.width || 50;
-    this.height = data.height || 50;
+    this.width = (0, _app.random)(50, 200);
+    this.height = (0, _app.random)(50, 200);
     // this.color = this.generateColor() || 0xff3300;
     this.color = 0xffffff;
     this.points = data.points || null;
@@ -33346,23 +33345,36 @@ var Shape = exports.Shape = /*#__PURE__*/function () {
       });
       g.lineTo(this.x, this.y);
       g.endFill();
-      console.log(this.color);
       return g;
     }
   }, {
     key: "initSprite",
     value: function initSprite(g) {
       if (g != null) {
-        var renderTexture = _pixi.RenderTexture.create({
-          resolution: window.devicePixelRatio
-        });
-        // With the existing renderer, render texture
-        // make sure to apply a transform Matrix
-        _app.app.renderer.render(g, {
-          renderTexture: renderTexture,
-          transform: new _pixi.Matrix(1, 0, 0, 1, renderTexture.width / 2, renderTexture.height / 2)
-        });
-        this.sprite.texture = renderTexture;
+        // const renderTexture = RenderTexture.create({
+        //   width: this.width,
+        //   height: this.height,
+        //   resolution: window.devicePixelRatio,
+        // });
+        // // With the existing renderer, render texture
+        // // make sure to apply a transform Matrix
+        // app.renderer.render(g, {
+        //   renderTexture,
+        //   transform: new Matrix(
+        //     1,
+        //     0,
+        //     0,
+        //     1,
+        //     renderTexture.width / 2,
+        //     renderTexture.height / 2
+        //   ),
+        // });
+
+        // this.sprite.texture = renderTexture;
+        this.sprite.texture = _app.app.renderer.generateTexture(g, 1, 1);
+        this.sprite.setTransform(this.x, this.y, 1, 1);
+        this.sprite.anchor.set(0.5, 0.5);
+        g.destroy();
       }
     }
   }, {
@@ -33616,8 +33628,11 @@ var App = exports.App = /*#__PURE__*/function () {
     this.gravity = 1;
     this.shapes = [];
     this.addBackground();
+    this.addShape = this.addShape.bind(this);
+    this.removeShape = this.removeShape.bind(this);
     this.onRemoveShape = this.onRemoveShape.bind(this);
     this.onAddShape = this.onAddShape.bind(this);
+    this.tick = this.tick.bind(this);
   }
   _createClass(App, [{
     key: "addBackground",
@@ -33648,7 +33663,17 @@ var App = exports.App = /*#__PURE__*/function () {
       this.background = new _pixi.Sprite(renderTexture);
       this.background.eventMode = "static";
       this.background.on("pointerdown", function (e) {
-        return _this.onAddShape(_this.getRandomShapeData(e.global));
+        // const ms = new Date().getTime();
+        // const width = random(50, 200);
+        // const height = random(50, 200);
+        // this.onAddShape({
+        //   id: ms,
+        //   x: e.global.x,
+        //   y: e.global.y,
+        //   width,
+        //   height,
+        // });
+        _this.onAddShape(_this.getRandomShapeData(e.global));
       });
       this.app.stage.addChild(this.background);
     }
@@ -33664,8 +33689,8 @@ var App = exports.App = /*#__PURE__*/function () {
     value: function getRandomShapeData(position) {
       console.log(position, "POSITION");
       return Object.assign({}, position, {
-        width: random(10, 200),
-        height: random(10, 200)
+        width: random(50, 200),
+        height: random(50, 200)
       });
     }
   }, {
@@ -33688,7 +33713,7 @@ var App = exports.App = /*#__PURE__*/function () {
       //   this.model.removeShape(newShape, this.onRemoveShape);
       // };
 
-      this.addSprite(newShape.sprite);
+      this.addSprite(newShape.sprite, newShape);
       console.log(newShape);
     }
   }, {
@@ -33709,8 +33734,13 @@ var App = exports.App = /*#__PURE__*/function () {
     value: function addSprite(sprite) {
       // sprite.x = random(0, this.app.screen.width);
       // sprite.y = 0 - sprite.height;
-      sprite.color = 0xffffff;
+      // sprite.color = 0xffffff;
+      sprite.anchor.set(0.5);
+      sprite.tint = parseInt(Math.floor(Math.random() * 16777215).toString(16), 16);
+      // sprite.width = shape.width;
+      // sprite.height = shape.height;
       this.background.addChild(sprite);
+      console.log(sprite.width, sprite.height, "SPRPITE");
     }
   }, {
     key: "moveShapes",
@@ -33727,17 +33757,17 @@ var App = exports.App = /*#__PURE__*/function () {
     key: "generateShapes",
     value: function generateShapes(containerSize, amount) {
       var ms = new Date().getTime();
-      // for (let i = 0; i < amount; i++) {
-      var width = random(50, 200);
-      var height = random(50, 200);
-      this.onAddShape({
-        id: ms,
-        x: random(0, containerSize.width - width / 2),
-        y: 0,
-        width: width,
-        height: height
-      });
-      // }
+      for (var i = 0; i < amount; i++) {
+        var width = random(50, 200);
+        var height = random(50, 200);
+        this.onAddShape({
+          id: ms,
+          x: random(0, containerSize.width - width / 2),
+          y: 0 - height,
+          width: width,
+          height: height
+        });
+      }
     }
   }, {
     key: "removeShape",
@@ -33753,11 +33783,23 @@ var App = exports.App = /*#__PURE__*/function () {
     value: function removeFinishedShapes(containerSize, callback) {
       var _this3 = this;
       this.shapes.filter(function (shape) {
-        return shape.x >= containerSize.width || shape.y >= containerSize.height;
+        return shape.y >= containerSize.height + shape.height;
       }).forEach(function (shape) {
         _this3.removeShape(shape, callback);
       });
       console.log("shape removed");
+    }
+  }, {
+    key: "tick",
+    value: function tick(containerSize, shouldGenerate) {
+      // each second generate given amount of shapes and remove those, which are outside of the canvas
+      if (shouldGenerate) {
+        this.generateShapes(containerSize, 1);
+        this.removeFinishedShapes(containerSize, this.onRemoveShape);
+      }
+      // move shapes and update stats
+      this.moveShapes();
+      // this.view.updateInfo(this.model.coveredArea, this.model.numberOfShapes);
     }
   }, {
     key: "coveredArea",
@@ -33798,11 +33840,14 @@ app.ticker.add(function () {
   };
   var tickerInterval = app.ticker.deltaMS; // ~16.6667ms by default
   var shouldGenerate = renderCounter * tickerInterval % 1000 < tickerInterval;
-  A.moveShapes();
-  if (shouldGenerate) {
-    A.generateShapes(containerSize, 50);
-    A.removeFinishedShapes(containerSize, A.onRemoveShape);
-  }
+  A.tick(containerSize, shouldGenerate);
+
+  // A.moveShapes();
+
+  // if (shouldGenerate) {
+  //   A.generateShapes(containerSize, 1);
+  //   A.removeFinishedShapes(containerSize, A.onRemoveShape);
+  // }
   // move shapes and update stats
   // app.updateInfo(this.model.coveredArea, this.model.numberOfShapes);
 
@@ -33834,7 +33879,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51684" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "47781" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

@@ -40,8 +40,11 @@ export class App {
 
     this.addBackground();
 
+    this.addShape = this.addShape.bind(this);
+    this.removeShape = this.removeShape.bind(this);
     this.onRemoveShape = this.onRemoveShape.bind(this);
     this.onAddShape = this.onAddShape.bind(this);
+    this.tick = this.tick.bind(this);
   }
 
   addBackground() {
@@ -71,9 +74,19 @@ export class App {
 
     this.background = new Sprite(renderTexture);
     this.background.eventMode = "static";
-    this.background.on("pointerdown", (e) =>
-      this.onAddShape(this.getRandomShapeData(e.global))
-    );
+    this.background.on("pointerdown", (e) => {
+      // const ms = new Date().getTime();
+      // const width = random(50, 200);
+      // const height = random(50, 200);
+      // this.onAddShape({
+      //   id: ms,
+      //   x: e.global.x,
+      //   y: e.global.y,
+      //   width,
+      //   height,
+      // });
+      this.onAddShape(this.getRandomShapeData(e.global));
+    });
     this.app.stage.addChild(this.background);
   }
 
@@ -86,8 +99,8 @@ export class App {
   getRandomShapeData(position) {
     console.log(position, "POSITION");
     return Object.assign({}, position, {
-      width: random(10, 200),
-      height: random(10, 200),
+      width: random(50, 200),
+      height: random(50, 200),
     });
   }
 
@@ -106,7 +119,7 @@ export class App {
     //   this.model.removeShape(newShape, this.onRemoveShape);
     // };
 
-    this.addSprite(newShape.sprite);
+    this.addSprite(newShape.sprite, newShape);
 
     console.log(newShape);
   }
@@ -125,8 +138,17 @@ export class App {
   addSprite(sprite) {
     // sprite.x = random(0, this.app.screen.width);
     // sprite.y = 0 - sprite.height;
-    sprite.color = 0xffffff;
+    // sprite.color = 0xffffff;
+    sprite.anchor.set(0.5);
+    sprite.tint = parseInt(
+      Math.floor(Math.random() * 16777215).toString(16),
+      16
+    );
+    // sprite.width = shape.width;
+    // sprite.height = shape.height;
     this.background.addChild(sprite);
+
+    console.log(sprite.width, sprite.height, "SPRPITE");
   }
 
   moveShapes() {
@@ -137,17 +159,17 @@ export class App {
 
   generateShapes(containerSize, amount) {
     const ms = new Date().getTime();
-    // for (let i = 0; i < amount; i++) {
-    const width = random(50, 200);
-    const height = random(50, 200);
-    this.onAddShape({
-      id: ms,
-      x: random(0, containerSize.width - width / 2),
-      y: 0,
-      width,
-      height,
-    });
-    // }
+    for (let i = 0; i < amount; i++) {
+      const width = random(50, 200);
+      const height = random(50, 200);
+      this.onAddShape({
+        id: ms,
+        x: random(0, containerSize.width - width / 2),
+        y: 0 - height,
+        width,
+        height,
+      });
+    }
   }
 
   removeShape(shapeToRemove, callback) {
@@ -160,15 +182,23 @@ export class App {
 
   removeFinishedShapes(containerSize, callback) {
     this.shapes
-      .filter(
-        (shape) =>
-          shape.x >= containerSize.width || shape.y >= containerSize.height
-      )
+      .filter((shape) => shape.y >= containerSize.height + shape.height)
       .forEach((shape) => {
         this.removeShape(shape, callback);
       });
 
     console.log("shape removed");
+  }
+
+  tick(containerSize, shouldGenerate) {
+    // each second generate given amount of shapes and remove those, which are outside of the canvas
+    if (shouldGenerate) {
+      this.generateShapes(containerSize, 1);
+      this.removeFinishedShapes(containerSize, this.onRemoveShape);
+    }
+    // move shapes and update stats
+    this.moveShapes();
+    // this.view.updateInfo(this.model.coveredArea, this.model.numberOfShapes);
   }
 
   get coveredArea() {
@@ -210,12 +240,14 @@ app.ticker.add(() => {
   const shouldGenerate =
     (renderCounter * tickerInterval) % 1000 < tickerInterval;
 
-  A.moveShapes();
+  A.tick(containerSize, shouldGenerate);
 
-  if (shouldGenerate) {
-    A.generateShapes(containerSize, 50);
-    A.removeFinishedShapes(containerSize, A.onRemoveShape);
-  }
+  // A.moveShapes();
+
+  // if (shouldGenerate) {
+  //   A.generateShapes(containerSize, 1);
+  //   A.removeFinishedShapes(containerSize, A.onRemoveShape);
+  // }
   // move shapes and update stats
   // app.updateInfo(this.model.coveredArea, this.model.numberOfShapes);
 

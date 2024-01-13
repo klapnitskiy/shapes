@@ -1,6 +1,7 @@
 import { RenderTexture, Graphics, Matrix } from "pixi.js";
 import { app } from "./app";
 import { polygonArea } from "./app";
+import { random } from "./app";
 
 export class Shape {
   constructor(data = {}) {
@@ -8,11 +9,9 @@ export class Shape {
       throw new Error("Can't instantiate shape without sprite");
     }
 
-    console.log(data.x);
-
     this.id = data.id || new Date().getTime();
-    this.width = data.width || 50;
-    this.height = data.height || 50;
+    this.width = random(50, 200);
+    this.height = random(50, 200);
     // this.color = this.generateColor() || 0xff3300;
     this.color = 0xffffff;
     this.points = data.points || null;
@@ -43,31 +42,35 @@ export class Shape {
     g.lineTo(this.x, this.y);
     g.endFill();
 
-    console.log(this.color);
-
     return g;
   }
 
   initSprite(g) {
     if (g != null) {
-      const renderTexture = RenderTexture.create({
-        resolution: window.devicePixelRatio,
-      });
-      // With the existing renderer, render texture
-      // make sure to apply a transform Matrix
-      app.renderer.render(g, {
-        renderTexture,
-        transform: new Matrix(
-          1,
-          0,
-          0,
-          1,
-          renderTexture.width / 2,
-          renderTexture.height / 2
-        ),
-      });
+      // const renderTexture = RenderTexture.create({
+      //   width: this.width,
+      //   height: this.height,
+      //   resolution: window.devicePixelRatio,
+      // });
+      // // With the existing renderer, render texture
+      // // make sure to apply a transform Matrix
+      // app.renderer.render(g, {
+      //   renderTexture,
+      //   transform: new Matrix(
+      //     1,
+      //     0,
+      //     0,
+      //     1,
+      //     renderTexture.width / 2,
+      //     renderTexture.height / 2
+      //   ),
+      // });
 
-      this.sprite.texture = renderTexture;
+      // this.sprite.texture = renderTexture;
+      this.sprite.texture = app.renderer.generateTexture(g, 1, 1);
+      this.sprite.setTransform(this.x, this.y, 1, 1);
+      this.sprite.anchor.set(0.5, 0.5);
+      g.destroy();
     }
   }
 
