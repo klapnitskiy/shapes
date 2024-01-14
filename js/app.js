@@ -7,10 +7,13 @@ import {
   Hexagon,
 } from "./shape-types";
 
-import { Application, Graphics, Sprite, RenderTexture, Matrix } from "pixi.js";
+import { Application, Graphics, Sprite, RenderTexture, Text } from "pixi.js";
 
 export const app = new Application({
   resizeTo: window,
+  autoDensity: true,
+  antialias: true,
+  resolution: window.devicePixelRatio,
 });
 
 globalThis.__PIXI_APP__ = app;
@@ -35,10 +38,42 @@ export class App {
   constructor(app) {
     this.app = app;
 
+    this.shapesPerSecond = 1;
     this.gravity = 1;
     this.shapes = [];
 
     this.addBackground();
+    this.addFields();
+    this.addButton(
+      "ADD",
+      () => {
+        this.shapesPerSecond++;
+      },
+      { x: 380, y: 5 }
+    );
+    this.addButton(
+      "SUB",
+      () => {
+        if (this.shapesPerSecond <= 0) return;
+        this.shapesPerSecond--;
+      },
+      { x: 430, y: 5 }
+    );
+    this.addButton(
+      "ADD",
+      () => {
+        this.gravity++;
+      },
+      { x: 635, y: 5 }
+    );
+    this.addButton(
+      "SUB",
+      () => {
+        if (this.gravity <= 1) return;
+        this.gravity--;
+      },
+      { x: 685, y: 5 }
+    );
 
     this.addShape = this.addShape.bind(this);
     this.removeShape = this.removeShape.bind(this);
@@ -49,7 +84,7 @@ export class App {
 
   addBackground() {
     const g = new Graphics();
-    g.beginFill(0x2f2f2f);
+    g.beginFill(0x643843);
     g.drawRect(0, 0, this.app.screen.width, this.app.screen.height);
     g.endFill();
 
@@ -62,42 +97,92 @@ export class App {
     // make sure to apply a transform Matrix
     this.app.renderer.render(g, {
       renderTexture,
-      // transform: new Matrix(
-      //   1,
-      //   0,
-      //   0,
-      //   1,
-      //   renderTexture.width / 2,
-      //   renderTexture.height / 2
-      // ),
     });
 
     this.background = new Sprite(renderTexture);
     this.background.eventMode = "static";
     this.background.on("pointerdown", (e) => {
-      // const ms = new Date().getTime();
-      // const width = random(50, 200);
-      // const height = random(50, 200);
-      // this.onAddShape({
-      //   id: ms,
-      //   x: e.global.x,
-      //   y: e.global.y,
-      //   width,
-      //   height,
-      // });
       this.onAddShape(this.getRandomShapeData(e.global));
     });
     this.app.stage.addChild(this.background);
   }
 
+  addFields() {
+    this.textContent = new Graphics();
+    const textArea = new Text("0", { fontSize: 16, fill: "#E7CBCB" });
+
+    this.textContent.beginFill(0x99627a);
+    this.textContent.drawRoundedRect(0, 0, this.app.screen.width, 50, 5);
+    this.textContent.endFill();
+
+    textArea.anchor.set(0, 0.5);
+    textArea.x = 10;
+    textArea.y = this.textContent.height / 2;
+
+    const textPerSecond = new Text(
+      ` Shapes per second: ${this.shapesPerSecond}`,
+      {
+        fontSize: 16,
+        fill: "#E7CBCB",
+        align: "center",
+        resolution: 5,
+      }
+    );
+
+    textPerSecond.anchor.set(0, 0.5);
+    textPerSecond.x = 200;
+    textPerSecond.y = textArea.y;
+
+    const textGravity = new Text(`Gravity value: ${this.gravity}`, {
+      fontSize: 16,
+      fill: "#E7CBCB",
+      align: "center",
+      resolution: 5,
+    });
+
+    textGravity.anchor.set(0, 0.5);
+    textGravity.x = 500;
+    textGravity.y = textArea.y;
+
+    this.textContent.addChild(textArea, textPerSecond, textGravity);
+
+    this.app.stage.addChild(this.textContent);
+  }
+
+  addButton(innerText, callback, position) {
+    const button = new Graphics()
+      .beginFill(0x643843)
+      .drawRoundedRect(0, 0, 40, 40, 100);
+    const text = new Text(innerText, { fontSize: 12, fill: "#E7CBCB" });
+    text.anchor.set(0.5);
+    text.x = button.width / 2;
+    text.y = button.height / 2;
+
+    button.x = position.x;
+    button.y = position.y;
+
+    button.addChild(text);
+
+    button.eventMode = "static";
+    button.on("pointerdown", callback);
+
+    this.textContent.addChild(button);
+  }
+
+  updateT() {
+    this.app.stage.children[1].children[0].text = `Covered area: ${this.coveredArea}`;
+    this.app.stage.children[1].children[1].text = `Shapes per second: ${this.shapesPerSecond}`;
+    this.app.stage.children[1].children[2].text = `Gravity value: ${this.gravity}`;
+  }
+
   createEmptySprite() {
     const sprite = new Sprite();
     sprite.eventMode = "static";
+
     return sprite;
   }
 
   getRandomShapeData(position) {
-    console.log(position, "POSITION");
     return Object.assign({}, position, {
       width: random(50, 200),
       height: random(50, 200),
@@ -114,21 +199,18 @@ export class App {
 
   onAddShape(data) {
     const newShape = this.addShape(data);
-    // newShape.sprite.click = ($event) => {
-    //   $event.stopPropagation(); // don't propagate to canvas
-    //   this.model.removeShape(newShape, this.onRemoveShape);
-    // };
 
-    this.addSprite(newShape.sprite, newShape);
+    newShape.sprite.on("pointerdown", (e) => {
+      e.stopPropagation();
+      this.removeShape(newShape, this.onRemoveShape);
+    });
 
-    console.log(newShape);
+    this.addSprite(newShape.sprite);
   }
 
   removeSprite(sprite) {
     this.background.removeChild(sprite);
-    // sprite.click = null;
     sprite.destroy();
-    console.log("sprite removed");
   }
 
   onRemoveShape(shape) {
@@ -136,19 +218,7 @@ export class App {
   }
 
   addSprite(sprite) {
-    // sprite.x = random(0, this.app.screen.width);
-    // sprite.y = 0 - sprite.height;
-    // sprite.color = 0xffffff;
-    sprite.anchor.set(0.5);
-    sprite.tint = parseInt(
-      Math.floor(Math.random() * 16777215).toString(16),
-      16
-    );
-    // sprite.width = shape.width;
-    // sprite.height = shape.height;
     this.background.addChild(sprite);
-
-    console.log(sprite.width, sprite.height, "SPRPITE");
   }
 
   moveShapes() {
@@ -186,19 +256,17 @@ export class App {
       .forEach((shape) => {
         this.removeShape(shape, callback);
       });
-
-    console.log("shape removed");
   }
 
   tick(containerSize, shouldGenerate) {
     // each second generate given amount of shapes and remove those, which are outside of the canvas
     if (shouldGenerate) {
-      this.generateShapes(containerSize, 1);
+      this.generateShapes(containerSize, this.shapesPerSecond);
       this.removeFinishedShapes(containerSize, this.onRemoveShape);
     }
     // move shapes and update stats
+    this.updateT();
     this.moveShapes();
-    // this.view.updateInfo(this.model.coveredArea, this.model.numberOfShapes);
   }
 
   get coveredArea() {
@@ -241,15 +309,6 @@ app.ticker.add(() => {
     (renderCounter * tickerInterval) % 1000 < tickerInterval;
 
   A.tick(containerSize, shouldGenerate);
-
-  // A.moveShapes();
-
-  // if (shouldGenerate) {
-  //   A.generateShapes(containerSize, 1);
-  //   A.removeFinishedShapes(containerSize, A.onRemoveShape);
-  // }
-  // move shapes and update stats
-  // app.updateInfo(this.model.coveredArea, this.model.numberOfShapes);
 
   renderCounter++;
 });

@@ -26,7 +26,7 @@ export class Ellipse extends Shape {
 
   render() {
     const g = this.createGraphics();
-    g.beginFill(this.color);
+    g.beginFill(this.tint);
     g.drawEllipse(this.x, this.y, this.width / 2, this.height / 2);
     g.endFill();
     return g;
@@ -44,7 +44,7 @@ export class Rectangle extends Shape {
 
   render() {
     const g = this.createGraphics();
-    g.beginFill(this.color);
+    g.beginFill(this.tint);
     g.drawRect(this.x, this.y, this.width, this.height);
     g.endFill();
     return g;

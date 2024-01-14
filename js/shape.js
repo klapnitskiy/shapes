@@ -12,8 +12,7 @@ export class Shape {
     this.id = data.id || new Date().getTime();
     this.width = random(50, 200);
     this.height = random(50, 200);
-    // this.color = this.generateColor() || 0xff3300;
-    this.color = 0xffffff;
+    this.tint = this.generateColor() || 0xff3300;
     this.points = data.points || null;
     this.sprite = data.sprite;
     this.x = data.x;
@@ -34,7 +33,7 @@ export class Shape {
     }
 
     const g = this.createGraphics();
-    g.beginFill(this.color);
+    g.beginFill(this.tint);
     g.moveTo(this.x, this.y);
     this.points.forEach((point) => {
       g.lineTo(point.x, point.y);
@@ -47,26 +46,6 @@ export class Shape {
 
   initSprite(g) {
     if (g != null) {
-      // const renderTexture = RenderTexture.create({
-      //   width: this.width,
-      //   height: this.height,
-      //   resolution: window.devicePixelRatio,
-      // });
-      // // With the existing renderer, render texture
-      // // make sure to apply a transform Matrix
-      // app.renderer.render(g, {
-      //   renderTexture,
-      //   transform: new Matrix(
-      //     1,
-      //     0,
-      //     0,
-      //     1,
-      //     renderTexture.width / 2,
-      //     renderTexture.height / 2
-      //   ),
-      // });
-
-      // this.sprite.texture = renderTexture;
       this.sprite.texture = app.renderer.generateTexture(g, 1, 1);
       this.sprite.setTransform(this.x, this.y, 1, 1);
       this.sprite.anchor.set(0.5, 0.5);

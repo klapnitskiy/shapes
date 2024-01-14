@@ -33316,8 +33316,7 @@ var Shape = exports.Shape = /*#__PURE__*/function () {
     this.id = data.id || new Date().getTime();
     this.width = (0, _app.random)(50, 200);
     this.height = (0, _app.random)(50, 200);
-    // this.color = this.generateColor() || 0xff3300;
-    this.color = 0xffffff;
+    this.tint = this.generateColor() || 0xff3300;
     this.points = data.points || null;
     this.sprite = data.sprite;
     this.x = data.x;
@@ -33338,7 +33337,7 @@ var Shape = exports.Shape = /*#__PURE__*/function () {
         return;
       }
       var g = this.createGraphics();
-      g.beginFill(this.color);
+      g.beginFill(this.tint);
       g.moveTo(this.x, this.y);
       this.points.forEach(function (point) {
         g.lineTo(point.x, point.y);
@@ -33351,26 +33350,6 @@ var Shape = exports.Shape = /*#__PURE__*/function () {
     key: "initSprite",
     value: function initSprite(g) {
       if (g != null) {
-        // const renderTexture = RenderTexture.create({
-        //   width: this.width,
-        //   height: this.height,
-        //   resolution: window.devicePixelRatio,
-        // });
-        // // With the existing renderer, render texture
-        // // make sure to apply a transform Matrix
-        // app.renderer.render(g, {
-        //   renderTexture,
-        //   transform: new Matrix(
-        //     1,
-        //     0,
-        //     0,
-        //     1,
-        //     renderTexture.width / 2,
-        //     renderTexture.height / 2
-        //   ),
-        // });
-
-        // this.sprite.texture = renderTexture;
         this.sprite.texture = _app.app.renderer.generateTexture(g, 1, 1);
         this.sprite.setTransform(this.x, this.y, 1, 1);
         this.sprite.anchor.set(0.5, 0.5);
@@ -33477,7 +33456,7 @@ var Ellipse = exports.Ellipse = /*#__PURE__*/function (_Shape2) {
     key: "render",
     value: function render() {
       var g = this.createGraphics();
-      g.beginFill(this.color);
+      g.beginFill(this.tint);
       g.drawEllipse(this.x, this.y, this.width / 2, this.height / 2);
       g.endFill();
       return g;
@@ -33501,7 +33480,7 @@ var Rectangle = exports.Rectangle = /*#__PURE__*/function (_Shape3) {
     key: "render",
     value: function render() {
       var g = this.createGraphics();
-      g.beginFill(this.color);
+      g.beginFill(this.tint);
       g.drawRect(this.x, this.y, this.width, this.height);
       g.endFill();
       return g;
@@ -33601,7 +33580,10 @@ function _classPrivateFieldGet(receiver, privateMap) { var descriptor = _classEx
 function _classExtractFieldDescriptor(receiver, privateMap, action) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to " + action + " private field on non-instance"); } return privateMap.get(receiver); }
 function _classApplyDescriptorGet(receiver, descriptor) { if (descriptor.get) { return descriptor.get.call(receiver); } return descriptor.value; }
 var app = exports.app = new _pixi.Application({
-  resizeTo: window
+  resizeTo: window,
+  autoDensity: true,
+  antialias: true,
+  resolution: window.devicePixelRatio
 });
 globalThis.__PIXI_APP__ = app;
 document.body.appendChild(app.view);
@@ -33619,15 +33601,44 @@ var polygonArea = exports.polygonArea = function polygonArea(points) {
 var _shapeClasses = /*#__PURE__*/new WeakMap();
 var App = exports.App = /*#__PURE__*/function () {
   function App(app) {
+    var _this = this;
     _classCallCheck(this, App);
     _classPrivateFieldInitSpec(this, _shapeClasses, {
       writable: true,
       value: [_shapeTypes.Triangle, _shapeTypes.Rectangle, _shapeTypes.Circle, _shapeTypes.Ellipse, _shapeTypes.Pentagon, _shapeTypes.Hexagon]
     });
     this.app = app;
+    this.shapesPerSecond = 1;
     this.gravity = 1;
     this.shapes = [];
     this.addBackground();
+    this.addFields();
+    this.addButton("ADD", function () {
+      _this.shapesPerSecond++;
+    }, {
+      x: 380,
+      y: 5
+    });
+    this.addButton("SUB", function () {
+      if (_this.shapesPerSecond <= 0) return;
+      _this.shapesPerSecond--;
+    }, {
+      x: 430,
+      y: 5
+    });
+    this.addButton("ADD", function () {
+      _this.gravity++;
+    }, {
+      x: 635,
+      y: 5
+    });
+    this.addButton("SUB", function () {
+      if (_this.gravity <= 1) return;
+      _this.gravity--;
+    }, {
+      x: 685,
+      y: 5
+    });
     this.addShape = this.addShape.bind(this);
     this.removeShape = this.removeShape.bind(this);
     this.onRemoveShape = this.onRemoveShape.bind(this);
@@ -33637,9 +33648,9 @@ var App = exports.App = /*#__PURE__*/function () {
   _createClass(App, [{
     key: "addBackground",
     value: function addBackground() {
-      var _this = this;
+      var _this2 = this;
       var g = new _pixi.Graphics();
-      g.beginFill(0x2f2f2f);
+      g.beginFill(0x643843);
       g.drawRect(0, 0, this.app.screen.width, this.app.screen.height);
       g.endFill();
       var renderTexture = _pixi.RenderTexture.create({
@@ -33651,31 +33662,73 @@ var App = exports.App = /*#__PURE__*/function () {
       // make sure to apply a transform Matrix
       this.app.renderer.render(g, {
         renderTexture: renderTexture
-        // transform: new Matrix(
-        //   1,
-        //   0,
-        //   0,
-        //   1,
-        //   renderTexture.width / 2,
-        //   renderTexture.height / 2
-        // ),
       });
       this.background = new _pixi.Sprite(renderTexture);
       this.background.eventMode = "static";
       this.background.on("pointerdown", function (e) {
-        // const ms = new Date().getTime();
-        // const width = random(50, 200);
-        // const height = random(50, 200);
-        // this.onAddShape({
-        //   id: ms,
-        //   x: e.global.x,
-        //   y: e.global.y,
-        //   width,
-        //   height,
-        // });
-        _this.onAddShape(_this.getRandomShapeData(e.global));
+        _this2.onAddShape(_this2.getRandomShapeData(e.global));
       });
       this.app.stage.addChild(this.background);
+    }
+  }, {
+    key: "addFields",
+    value: function addFields() {
+      this.textContent = new _pixi.Graphics();
+      var textArea = new _pixi.Text("0", {
+        fontSize: 16,
+        fill: "#E7CBCB"
+      });
+      this.textContent.beginFill(0x99627a);
+      this.textContent.drawRoundedRect(0, 0, this.app.screen.width, 50, 5);
+      this.textContent.endFill();
+      textArea.anchor.set(0, 0.5);
+      textArea.x = 10;
+      textArea.y = this.textContent.height / 2;
+      var textPerSecond = new _pixi.Text(" Shapes per second: ".concat(this.shapesPerSecond), {
+        fontSize: 16,
+        fill: "#E7CBCB",
+        align: "center",
+        resolution: 5
+      });
+      textPerSecond.anchor.set(0, 0.5);
+      textPerSecond.x = 200;
+      textPerSecond.y = textArea.y;
+      var textGravity = new _pixi.Text("Gravity value: ".concat(this.gravity), {
+        fontSize: 16,
+        fill: "#E7CBCB",
+        align: "center",
+        resolution: 5
+      });
+      textGravity.anchor.set(0, 0.5);
+      textGravity.x = 500;
+      textGravity.y = textArea.y;
+      this.textContent.addChild(textArea, textPerSecond, textGravity);
+      this.app.stage.addChild(this.textContent);
+    }
+  }, {
+    key: "addButton",
+    value: function addButton(innerText, callback, position) {
+      var button = new _pixi.Graphics().beginFill(0x643843).drawRoundedRect(0, 0, 40, 40, 100);
+      var text = new _pixi.Text(innerText, {
+        fontSize: 12,
+        fill: "#E7CBCB"
+      });
+      text.anchor.set(0.5);
+      text.x = button.width / 2;
+      text.y = button.height / 2;
+      button.x = position.x;
+      button.y = position.y;
+      button.addChild(text);
+      button.eventMode = "static";
+      button.on("pointerdown", callback);
+      this.textContent.addChild(button);
+    }
+  }, {
+    key: "updateT",
+    value: function updateT() {
+      this.app.stage.children[1].children[0].text = "Covered area: ".concat(this.coveredArea);
+      this.app.stage.children[1].children[1].text = "Shapes per second: ".concat(this.shapesPerSecond);
+      this.app.stage.children[1].children[2].text = "Gravity value: ".concat(this.gravity);
     }
   }, {
     key: "createEmptySprite",
@@ -33687,7 +33740,6 @@ var App = exports.App = /*#__PURE__*/function () {
   }, {
     key: "getRandomShapeData",
     value: function getRandomShapeData(position) {
-      console.log(position, "POSITION");
       return Object.assign({}, position, {
         width: random(50, 200),
         height: random(50, 200)
@@ -33707,22 +33759,19 @@ var App = exports.App = /*#__PURE__*/function () {
   }, {
     key: "onAddShape",
     value: function onAddShape(data) {
+      var _this3 = this;
       var newShape = this.addShape(data);
-      // newShape.sprite.click = ($event) => {
-      //   $event.stopPropagation(); // don't propagate to canvas
-      //   this.model.removeShape(newShape, this.onRemoveShape);
-      // };
-
-      this.addSprite(newShape.sprite, newShape);
-      console.log(newShape);
+      newShape.sprite.on("pointerdown", function (e) {
+        e.stopPropagation();
+        _this3.removeShape(newShape, _this3.onRemoveShape);
+      });
+      this.addSprite(newShape.sprite);
     }
   }, {
     key: "removeSprite",
     value: function removeSprite(sprite) {
       this.background.removeChild(sprite);
-      // sprite.click = null;
       sprite.destroy();
-      console.log("sprite removed");
     }
   }, {
     key: "onRemoveShape",
@@ -33732,24 +33781,16 @@ var App = exports.App = /*#__PURE__*/function () {
   }, {
     key: "addSprite",
     value: function addSprite(sprite) {
-      // sprite.x = random(0, this.app.screen.width);
-      // sprite.y = 0 - sprite.height;
-      // sprite.color = 0xffffff;
-      sprite.anchor.set(0.5);
-      sprite.tint = parseInt(Math.floor(Math.random() * 16777215).toString(16), 16);
-      // sprite.width = shape.width;
-      // sprite.height = shape.height;
       this.background.addChild(sprite);
-      console.log(sprite.width, sprite.height, "SPRPITE");
     }
   }, {
     key: "moveShapes",
     value: function moveShapes() {
-      var _this2 = this;
+      var _this4 = this;
       this.shapes.forEach(function (shape) {
         shape.move({
           x: 0,
-          y: _this2.gravity
+          y: _this4.gravity
         });
       });
     }
@@ -33781,25 +33822,24 @@ var App = exports.App = /*#__PURE__*/function () {
   }, {
     key: "removeFinishedShapes",
     value: function removeFinishedShapes(containerSize, callback) {
-      var _this3 = this;
+      var _this5 = this;
       this.shapes.filter(function (shape) {
         return shape.y >= containerSize.height + shape.height;
       }).forEach(function (shape) {
-        _this3.removeShape(shape, callback);
+        _this5.removeShape(shape, callback);
       });
-      console.log("shape removed");
     }
   }, {
     key: "tick",
     value: function tick(containerSize, shouldGenerate) {
       // each second generate given amount of shapes and remove those, which are outside of the canvas
       if (shouldGenerate) {
-        this.generateShapes(containerSize, 1);
+        this.generateShapes(containerSize, this.shapesPerSecond);
         this.removeFinishedShapes(containerSize, this.onRemoveShape);
       }
       // move shapes and update stats
+      this.updateT();
       this.moveShapes();
-      // this.view.updateInfo(this.model.coveredArea, this.model.numberOfShapes);
     }
   }, {
     key: "coveredArea",
@@ -33841,16 +33881,6 @@ app.ticker.add(function () {
   var tickerInterval = app.ticker.deltaMS; // ~16.6667ms by default
   var shouldGenerate = renderCounter * tickerInterval % 1000 < tickerInterval;
   A.tick(containerSize, shouldGenerate);
-
-  // A.moveShapes();
-
-  // if (shouldGenerate) {
-  //   A.generateShapes(containerSize, 1);
-  //   A.removeFinishedShapes(containerSize, A.onRemoveShape);
-  // }
-  // move shapes and update stats
-  // app.updateInfo(this.model.coveredArea, this.model.numberOfShapes);
-
   renderCounter++;
 });
 var A = new App(app);
@@ -33879,7 +33909,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "47781" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "12045" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
