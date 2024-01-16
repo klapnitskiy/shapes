@@ -5,33 +5,11 @@ import { Hexagon } from "./shape-types/hexagon";
 import { Pentagon } from "./shape-types/pentagon";
 import { Rectangle } from "./shape-types/rectangle";
 
-import { Application, Graphics, Sprite, RenderTexture, Text } from "pixi.js";
-
-export const app = new Application({
-  resizeTo: window,
-  autoDensity: true,
-  antialias: true,
-  resolution: window.devicePixelRatio,
-});
-
-globalThis.__PIXI_APP__ = app;
-
-document.body.appendChild(app.view);
-
-const vectorProd = (v1, v2) => v1.x * v2.y - v1.y * v2.x;
-
-export const random = (min, max) =>
-  Math.floor(Math.random() * (max - min)) + min;
-
-export const polygonArea = (points) =>
-  points.reduce(
-    (prev, curr, index, array) =>
-      prev + (index > 0 ? vectorProd(array[index - 1], curr) : 0),
-    0
-  ) / 2;
+import { AppService, ShapeService } from "./Game.service.js";
 
 export class App {
-  #shapeClasses = [Triangle, Rectangle, Circle, Ellipse, Pentagon, Hexagon];
+  shapeClasses = [Triangle, Rectangle, Circle, Ellipse, Pentagon, Hexagon];
+  // shapeClasses = [Triangle];
 
   constructor(app) {
     this.app = app;
@@ -39,24 +17,10 @@ export class App {
     this.shapesPerSecond = 1;
     this.gravity = 1;
     this.shapes = [];
+    this.buttonContainer = document.querySelector(".controls");
 
     this.addBackground();
     this.addFields();
-    this.addButton(
-      "ADD",
-      () => {
-        this.shapesPerSecond++;
-      },
-      { x: 380, y: 5 }
-    );
-    this.addButton(
-      "SUB",
-      () => {
-        if (this.shapesPerSecond <= 0) return;
-        this.shapesPerSecond--;
-      },
-      { x: 430, y: 5 }
-    );
     this.addButton(
       "ADD",
       () => {
@@ -73,6 +37,23 @@ export class App {
       { x: 685, y: 5 }
     );
 
+    this.addHtmlButton(
+      "ADD",
+      () => {
+        this.shapesPerSecond++;
+      },
+      { x: 380, y: 5 }
+    );
+
+    this.addHtmlButton(
+      "SUB",
+      () => {
+        if (this.shapesPerSecond <= 0) return;
+        this.shapesPerSecond--;
+      },
+      { x: 390, y: 5 }
+    );
+
     this.addShape = this.addShape.bind(this);
     this.removeShape = this.removeShape.bind(this);
     this.onRemoveShape = this.onRemoveShape.bind(this);
@@ -81,207 +62,76 @@ export class App {
   }
 
   addBackground() {
-    const g = new Graphics();
-    g.beginFill(0x643843);
-    g.drawRect(0, 0, this.app.screen.width, this.app.screen.height);
-    g.endFill();
-
-    const renderTexture = RenderTexture.create({
-      width: this.app.screen.width,
-      height: this.app.screen.height,
-      resolution: window.devicePixelRatio,
-    });
-    // With the existing renderer, render texture
-    // make sure to apply a transform Matrix
-    this.app.renderer.render(g, {
-      renderTexture,
-    });
-
-    this.background = new Sprite(renderTexture);
-    this.background.eventMode = "static";
-    this.background.on("pointerdown", (e) => {
-      this.onAddShape(this.getRandomShapeData(e.global));
-    });
-    this.app.stage.addChild(this.background);
+    AppService.addBackground.apply(this);
   }
 
   addFields() {
-    this.textContent = new Graphics();
-    const textArea = new Text("0", { fontSize: 16, fill: "#E7CBCB" });
+    AppService.addFields.apply(this);
+  }
 
-    this.textContent.beginFill(0x99627a);
-    this.textContent.drawRoundedRect(0, 0, this.app.screen.width, 50, 5);
-    this.textContent.endFill();
+  addHtmlButton(innerText, callback, position) {
+    const btn = document.createElement("button");
+    btn.classList.add("button");
 
-    textArea.anchor.set(0, 0.5);
-    textArea.x = 10;
-    textArea.y = this.textContent.height / 2;
+    btn.innerText = innerText;
 
-    const textPerSecond = new Text(
-      ` Shapes per second: ${this.shapesPerSecond}`,
-      {
-        fontSize: 16,
-        fill: "#E7CBCB",
-        align: "center",
-        resolution: 5,
-      }
-    );
+    btn.style.transform = `translate(${position.x}px, ${position.y}px)`;
 
-    textPerSecond.anchor.set(0, 0.5);
-    textPerSecond.x = 200;
-    textPerSecond.y = textArea.y;
+    btn.addEventListener("click", callback);
 
-    const textGravity = new Text(`Gravity value: ${this.gravity}`, {
-      fontSize: 16,
-      fill: "#E7CBCB",
-      align: "center",
-      resolution: 5,
-    });
-
-    textGravity.anchor.set(0, 0.5);
-    textGravity.x = 500;
-    textGravity.y = textArea.y;
-
-    const textShapes = new Text(
-      `Shapes being displayed: ${this.numberOfShapes}`,
-      {
-        fontSize: 16,
-        fill: "#E7CBCB",
-        align: "center",
-        resolution: 5,
-      }
-    );
-
-    textShapes.anchor.set(0, 0.5);
-    textShapes.x = 770;
-    textShapes.y = textArea.y;
-
-    this.textContent.addChild(textArea, textPerSecond, textGravity, textShapes);
-
-    this.app.stage.addChild(this.textContent);
+    this.buttonContainer.appendChild(btn);
   }
 
   addButton(innerText, callback, position) {
-    const button = new Graphics()
-      .beginFill(0x643843)
-      .drawRoundedRect(0, 0, 40, 40, 100);
-    const text = new Text(innerText, { fontSize: 12, fill: "#E7CBCB" });
-    text.anchor.set(0.5);
-    text.x = button.width / 2;
-    text.y = button.height / 2;
-
-    button.x = position.x;
-    button.y = position.y;
-
-    button.addChild(text);
-
-    button.eventMode = "static";
-    button.on("pointerdown", callback);
-
-    this.textContent.addChild(button);
+    AppService.addButton.call(this, innerText, callback, position);
   }
 
   updateT() {
-    this.app.stage.children[1].children[0].text = `Covered area: ${this.coveredArea}`;
-    this.app.stage.children[1].children[1].text = `Shapes per second: ${this.shapesPerSecond}`;
-    this.app.stage.children[1].children[2].text = `Gravity value: ${this.gravity}`;
-    this.app.stage.children[1].children[3].text = `Shapes being displayed: ${this.numberOfShapes}`;
+    AppService.updateT.apply(this);
   }
 
   createEmptySprite() {
-    const sprite = new Sprite();
-    sprite.eventMode = "static";
-
-    return sprite;
-  }
-
-  getRandomShapeData(position) {
-    return Object.assign({}, position, {
-      width: random(50, 200),
-      height: random(50, 200),
-    });
+    return ShapeService.createEmptySprite();
   }
 
   addShape(data) {
-    const sprite = this.createEmptySprite();
-    const ShapeClass = this.#shapeClasses[random(0, this.#shapeClasses.length)]; // randomly select type of shape
-    const newShape = new ShapeClass(Object.assign(data, { sprite }));
-    this.shapes.push(newShape);
-    return newShape;
+    return ShapeService.addShape.call(this, data);
   }
 
   onAddShape(data) {
-    const newShape = this.addShape(data);
-
-    newShape.sprite.on("pointerdown", (e) => {
-      e.stopPropagation();
-      this.removeShape(newShape, this.onRemoveShape);
-    });
-
-    this.addSprite(newShape.sprite);
+    ShapeService.onAddShape.call(this, data);
   }
 
   removeSprite(sprite) {
-    this.background.removeChild(sprite);
-    sprite.destroy();
+    ShapeService.removeSprite.call(this, sprite);
   }
 
   onRemoveShape(shape) {
-    this.removeSprite(shape.sprite);
+    ShapeService.onRemoveShape.call(this, shape);
   }
 
   addSprite(sprite) {
-    this.background.addChild(sprite);
+    ShapeService.addSprite.call(this, sprite);
   }
 
   moveShapes() {
-    this.shapes.forEach((shape) => {
-      shape.move({ x: 0, y: this.gravity });
-    });
+    AppService.moveShapes.apply(this);
   }
 
   generateShapes(containerSize, amount) {
-    console.log("GENERATED SHAPE");
-    const ms = new Date().getTime();
-    for (let i = 0; i < amount; i++) {
-      const width = random(50, 200);
-      const height = random(50, 200);
-      this.onAddShape({
-        id: ms,
-        x: random(0, containerSize.width - width / 2),
-        y: 0 - height,
-        width,
-        height,
-      });
-    }
+    ShapeService.generateShapes.call(this, containerSize, amount);
   }
 
   removeShape(shapeToRemove, callback) {
-    const shapeIndex = this.shapes.findIndex(
-      (shape) => shape.id === shapeToRemove.id
-    );
-    callback(this.shapes[shapeIndex]); // notify view (through controller) in order to remove sprite from canvas
-    this.shapes.splice(shapeIndex, 1);
+    ShapeService.removeShape.call(this, shapeToRemove, callback);
   }
 
   removeFinishedShapes(containerSize, callback) {
-    this.shapes
-      .filter((shape) => shape.y >= containerSize.height + shape.height)
-      .forEach((shape) => {
-        this.removeShape(shape, callback);
-      });
+    ShapeService.removeFinishedShapes.call(this, containerSize, callback);
   }
 
   tick(containerSize, shouldGenerate) {
-    // each second generate given amount of shapes and remove those, which are outside of the canvas
-    if (shouldGenerate) {
-      console.log("GENERATED");
-      this.generateShapes(containerSize, this.shapesPerSecond);
-      this.removeFinishedShapes(containerSize, this.onRemoveShape);
-    }
-    // move shapes and update stats
-    this.updateT();
-    this.moveShapes();
+    AppService.tick.call(this, containerSize, shouldGenerate);
   }
 
   get coveredArea() {
@@ -307,36 +157,6 @@ export class App {
   }
 
   get numberOfShapes() {
-    console.log(this.shapes.length);
     return this.shapes.length;
   }
 }
-
-let renderCounter = 0;
-
-let second = 0;
-
-app.ticker.add((delta) => {
-  const containerSize = {
-    width: app.view.clientWidth,
-    height: app.view.clientHeight,
-  };
-
-  // const tickerInterval = app.ticker.elapsedMS; // ~16.6667ms by default
-  // const shouldGenerate =
-  //   (renderCounter * tickerInterval) % 1000 < tickerInterval;
-
-  second += (1 / 60) * delta;
-
-  const toGenerate = second >= 1;
-
-  if (second >= 1) {
-    second = 0;
-  }
-
-  A.tick(containerSize, toGenerate);
-
-  renderCounter++;
-});
-
-const A = new App(app);

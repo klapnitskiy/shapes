@@ -1,5 +1,5 @@
 import { Shape } from "../shape";
-import { random } from "../app";
+import { random } from "../helpers";
 
 export class Triangle extends Shape {
   constructor(data = {}) {
@@ -7,12 +7,12 @@ export class Triangle extends Shape {
       Object.assign(data, {
         points: [
           {
-            x: random(data.x, data.x + data.width / 2),
-            y: random(data.y + data.height / 3, data.y + data.height),
+            x: data.x + data.width / 2,
+            y: data.y + data.height,
           },
           {
-            x: random(Math.max(0, data.x - data.width / 2), data.x),
-            y: random(data.y + data.height / 3, data.y + data.height),
+            x: data.x - data.width / 2,
+            y: data.y + data.height,
           },
         ],
       })

@@ -1,7 +1,8 @@
 import { RenderTexture, Graphics, Matrix } from "pixi.js";
-import { app } from "./app";
-import { polygonArea } from "./app";
-import { random } from "./app";
+import { app } from "./start";
+import { polygonArea } from "./helpers";
+import { random } from "./helpers";
+import { SHAPE_SIZE } from "./constants";
 
 export class Shape {
   constructor(data = {}) {
@@ -10,10 +11,11 @@ export class Shape {
     }
 
     this.id = data.id || new Date().getTime();
-    this.width = random(150, 200);
-    this.height = random(150, 200);
+    this.width = SHAPE_SIZE.WIDTH;
+    this.height = SHAPE_SIZE.HEIGHT;
     this.tint = this.generateColor() || 0xff3300;
     this.points = data.points || null;
+    console.log(this.points, "POINTS");
     this.sprite = data.sprite;
     this.x = data.x;
     this.y = data.y;
@@ -32,24 +34,24 @@ export class Shape {
       return;
     }
 
-    const g = this.createGraphics();
-    g.beginFill(this.tint);
-    g.moveTo(this.x, this.y);
+    const graphics = this.createGraphics();
+    graphics.beginFill(this.tint);
+    graphics.moveTo(this.x, this.y);
     this.points.forEach((point) => {
-      g.lineTo(point.x, point.y);
+      graphics.lineTo(point.x, point.y);
     });
-    g.lineTo(this.x, this.y);
-    g.endFill();
+    graphics.lineTo(this.x, this.y);
+    graphics.endFill();
 
-    return g;
+    return graphics;
   }
 
-  initSprite(g) {
-    if (g != null) {
-      this.sprite.texture = app.renderer.generateTexture(g, 1, 1);
+  initSprite(graphics) {
+    if (graphics != null) {
+      this.sprite.texture = app.renderer.generateTexture(graphics, 1, 1);
       this.sprite.setTransform(this.x, this.y, 1, 1);
       this.sprite.anchor.set(0.5, 0.5);
-      g.destroy();
+      graphics.destroy();
     }
   }
 

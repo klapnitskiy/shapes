@@ -1,5 +1,4 @@
 import { Shape } from "../shape";
-import { random } from "../app";
 
 export class Rectangle extends Shape {
   constructor(data = {}) {
