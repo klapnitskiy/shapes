@@ -10,8 +10,8 @@ export class Shape {
     }
 
     this.id = data.id || new Date().getTime();
-    this.width = random(50, 200);
-    this.height = random(50, 200);
+    this.width = random(150, 200);
+    this.height = random(150, 200);
     this.tint = this.generateColor() || 0xff3300;
     this.points = data.points || null;
     this.sprite = data.sprite;
@@ -54,10 +54,8 @@ export class Shape {
   }
 
   createGraphics() {
-    const g = new Graphics();
-    g.boundsPadding = 0;
-
-    return g;
+    const shapeGraphics = new Graphics();
+    return shapeGraphics;
   }
 
   getArea() {

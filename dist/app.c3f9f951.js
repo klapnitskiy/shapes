@@ -33314,8 +33314,8 @@ var Shape = exports.Shape = /*#__PURE__*/function () {
       throw new Error("Can't instantiate shape without sprite");
     }
     this.id = data.id || new Date().getTime();
-    this.width = (0, _app.random)(50, 200);
-    this.height = (0, _app.random)(50, 200);
+    this.width = (0, _app.random)(150, 200);
+    this.height = (0, _app.random)(150, 200);
     this.tint = this.generateColor() || 0xff3300;
     this.points = data.points || null;
     this.sprite = data.sprite;
@@ -33359,9 +33359,8 @@ var Shape = exports.Shape = /*#__PURE__*/function () {
   }, {
     key: "createGraphics",
     value: function createGraphics() {
-      var g = new _pixi.Graphics();
-      g.boundsPadding = 0;
-      return g;
+      var shapeGraphics = new _pixi.Graphics();
+      return shapeGraphics;
     }
   }, {
     key: "getArea",
@@ -33399,15 +33398,100 @@ var Shape = exports.Shape = /*#__PURE__*/function () {
   }]);
   return Shape;
 }();
-},{"pixi.js":"node_modules/pixi.js/lib/index.mjs","./app":"js/app.js"}],"js/shape-types.js":[function(require,module,exports) {
+},{"pixi.js":"node_modules/pixi.js/lib/index.mjs","./app":"js/app.js"}],"js/shape-types/triangle.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Triangle = exports.Rectangle = exports.Pentagon = exports.Hexagon = exports.Ellipse = exports.Circle = void 0;
-var _shape = require("./shape");
-var _app = require("./app");
+exports.Triangle = void 0;
+var _shape = require("../shape");
+var _app = require("../app");
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : String(i); }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+var Triangle = exports.Triangle = /*#__PURE__*/function (_Shape) {
+  _inherits(Triangle, _Shape);
+  function Triangle() {
+    var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    _classCallCheck(this, Triangle);
+    return _callSuper(this, Triangle, [Object.assign(data, {
+      points: [{
+        x: (0, _app.random)(data.x, data.x + data.width / 2),
+        y: (0, _app.random)(data.y + data.height / 3, data.y + data.height)
+      }, {
+        x: (0, _app.random)(Math.max(0, data.x - data.width / 2), data.x),
+        y: (0, _app.random)(data.y + data.height / 3, data.y + data.height)
+      }]
+    })]);
+  }
+  return _createClass(Triangle);
+}(_shape.Shape);
+},{"../shape":"js/shape.js","../app":"js/app.js"}],"js/shape-types/ellipse.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Ellipse = void 0;
+var _shape = require("../shape");
+var _app = require("../app");
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : String(i); }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+var Ellipse = exports.Ellipse = /*#__PURE__*/function (_Shape) {
+  _inherits(Ellipse, _Shape);
+  function Ellipse() {
+    var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    _classCallCheck(this, Ellipse);
+    return _callSuper(this, Ellipse, [data]);
+  }
+  _createClass(Ellipse, [{
+    key: "render",
+    value: function render() {
+      var g = this.createGraphics();
+      g.beginFill(this.tint);
+      g.drawEllipse(this.x, this.y, this.width / 2, this.height / 2);
+      g.endFill();
+      return g;
+    }
+  }, {
+    key: "getArea",
+    value: function getArea() {
+      return Math.PI * (this.width / 2) * (this.height / 2);
+    }
+  }]);
+  return Ellipse;
+}(_shape.Shape);
+},{"../shape":"js/shape.js","../app":"js/app.js"}],"js/shape-types/circle.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Circle = void 0;
+var _shape = require("../shape");
+var _app = require("../app");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
@@ -33445,96 +33529,30 @@ var Circle = exports.Circle = /*#__PURE__*/function (_Shape) {
   }]);
   return Circle;
 }(_shape.Shape);
-var Ellipse = exports.Ellipse = /*#__PURE__*/function (_Shape2) {
-  _inherits(Ellipse, _Shape2);
-  function Ellipse() {
-    var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    _classCallCheck(this, Ellipse);
-    return _callSuper(this, Ellipse, [data]);
-  }
-  _createClass(Ellipse, [{
-    key: "render",
-    value: function render() {
-      var g = this.createGraphics();
-      g.beginFill(this.tint);
-      g.drawEllipse(this.x, this.y, this.width / 2, this.height / 2);
-      g.endFill();
-      return g;
-    }
-  }, {
-    key: "getArea",
-    value: function getArea() {
-      return Math.PI * (this.width / 2) * (this.height / 2);
-    }
-  }]);
-  return Ellipse;
-}(_shape.Shape);
-var Rectangle = exports.Rectangle = /*#__PURE__*/function (_Shape3) {
-  _inherits(Rectangle, _Shape3);
-  function Rectangle() {
-    var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    _classCallCheck(this, Rectangle);
-    return _callSuper(this, Rectangle, [data]);
-  }
-  _createClass(Rectangle, [{
-    key: "render",
-    value: function render() {
-      var g = this.createGraphics();
-      g.beginFill(this.tint);
-      g.drawRect(this.x, this.y, this.width, this.height);
-      g.endFill();
-      return g;
-    }
-  }, {
-    key: "getArea",
-    value: function getArea() {
-      return this.width * this.height;
-    }
-  }]);
-  return Rectangle;
-}(_shape.Shape);
-var Triangle = exports.Triangle = /*#__PURE__*/function (_Shape4) {
-  _inherits(Triangle, _Shape4);
-  function Triangle() {
-    var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    _classCallCheck(this, Triangle);
-    return _callSuper(this, Triangle, [Object.assign(data, {
-      points: [{
-        x: (0, _app.random)(data.x, data.x + data.width / 2),
-        y: (0, _app.random)(data.y + data.height / 3, data.y + data.height)
-      }, {
-        x: (0, _app.random)(Math.max(0, data.x - data.width / 2), data.x),
-        y: (0, _app.random)(data.y + data.height / 3, data.y + data.height)
-      }]
-    })]);
-  }
-  return _createClass(Triangle);
-}(_shape.Shape);
-var Pentagon = exports.Pentagon = /*#__PURE__*/function (_Shape5) {
-  _inherits(Pentagon, _Shape5);
-  function Pentagon() {
-    var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    _classCallCheck(this, Pentagon);
-    return _callSuper(this, Pentagon, [Object.assign(data, {
-      points: [{
-        x: (0, _app.random)(data.x, data.x + data.width / 2),
-        y: (0, _app.random)(data.y, data.y + data.height / 2)
-      }, {
-        x: (0, _app.random)(data.x, data.x + data.width / 2),
-        y: (0, _app.random)(data.y + data.height / 2, data.y + data.height)
-      }, {
-        x: (0, _app.random)(Math.max(0, data.x - data.width / 2), data.x),
-        y: (0, _app.random)(data.y + data.height / 2, data.y + data.height)
-      }, {
-        x: (0, _app.random)(Math.max(0, data.x - data.width / 2), data.x),
-        y: (0, _app.random)(data.y, data.y + data.height / 2)
-      }]
-    })]);
-  }
-  return _createClass(Pentagon);
-}(_shape.Shape);
-var Hexagon = exports.Hexagon = /*#__PURE__*/function (_Shape6) {
-  _inherits(Hexagon, _Shape6);
+},{"../shape":"js/shape.js","../app":"js/app.js"}],"js/shape-types/hexagon.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Hexagon = void 0;
+var _shape = require("../shape");
+var _app = require("../app");
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : String(i); }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+var Hexagon = exports.Hexagon = /*#__PURE__*/function (_Shape) {
+  _inherits(Hexagon, _Shape);
   function Hexagon() {
     var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     _classCallCheck(this, Hexagon);
@@ -33559,14 +33577,110 @@ var Hexagon = exports.Hexagon = /*#__PURE__*/function (_Shape6) {
   }
   return _createClass(Hexagon);
 }(_shape.Shape);
-},{"./shape":"js/shape.js","./app":"js/app.js"}],"js/app.js":[function(require,module,exports) {
+},{"../shape":"js/shape.js","../app":"js/app.js"}],"js/shape-types/pentagon.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Pentagon = void 0;
+var _shape = require("../shape");
+var _app = require("../app");
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : String(i); }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+var Pentagon = exports.Pentagon = /*#__PURE__*/function (_Shape) {
+  _inherits(Pentagon, _Shape);
+  function Pentagon() {
+    var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    _classCallCheck(this, Pentagon);
+    return _callSuper(this, Pentagon, [Object.assign(data, {
+      points: [{
+        x: (0, _app.random)(data.x, data.x + data.width / 2),
+        y: (0, _app.random)(data.y, data.y + data.height / 2)
+      }, {
+        x: (0, _app.random)(data.x, data.x + data.width / 2),
+        y: (0, _app.random)(data.y + data.height / 2, data.y + data.height)
+      }, {
+        x: (0, _app.random)(Math.max(0, data.x - data.width / 2), data.x),
+        y: (0, _app.random)(data.y + data.height / 2, data.y + data.height)
+      }, {
+        x: (0, _app.random)(Math.max(0, data.x - data.width / 2), data.x),
+        y: (0, _app.random)(data.y, data.y + data.height / 2)
+      }]
+    })]);
+  }
+  return _createClass(Pentagon);
+}(_shape.Shape);
+},{"../shape":"js/shape.js","../app":"js/app.js"}],"js/shape-types/rectangle.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Rectangle = void 0;
+var _shape = require("../shape");
+var _app = require("../app");
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : String(i); }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+var Rectangle = exports.Rectangle = /*#__PURE__*/function (_Shape) {
+  _inherits(Rectangle, _Shape);
+  function Rectangle() {
+    var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    _classCallCheck(this, Rectangle);
+    return _callSuper(this, Rectangle, [data]);
+  }
+  _createClass(Rectangle, [{
+    key: "render",
+    value: function render() {
+      var g = this.createGraphics();
+      g.beginFill(this.tint);
+      g.drawRect(this.x, this.y, this.width, this.height);
+      g.endFill();
+      return g;
+    }
+  }, {
+    key: "getArea",
+    value: function getArea() {
+      return this.width * this.height;
+    }
+  }]);
+  return Rectangle;
+}(_shape.Shape);
+},{"../shape":"js/shape.js","../app":"js/app.js"}],"js/app.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.random = exports.polygonArea = exports.app = exports.App = void 0;
-var _shapeTypes = require("./shape-types");
+var _triangle = require("./shape-types/triangle");
+var _ellipse = require("./shape-types/ellipse");
+var _circle = require("./shape-types/circle");
+var _hexagon = require("./shape-types/hexagon");
+var _pentagon = require("./shape-types/pentagon");
+var _rectangle = require("./shape-types/rectangle");
 var _pixi = require("pixi.js");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -33605,7 +33719,7 @@ var App = exports.App = /*#__PURE__*/function () {
     _classCallCheck(this, App);
     _classPrivateFieldInitSpec(this, _shapeClasses, {
       writable: true,
-      value: [_shapeTypes.Triangle, _shapeTypes.Rectangle, _shapeTypes.Circle, _shapeTypes.Ellipse, _shapeTypes.Pentagon, _shapeTypes.Hexagon]
+      value: [_triangle.Triangle, _rectangle.Rectangle, _circle.Circle, _ellipse.Ellipse, _pentagon.Pentagon, _hexagon.Hexagon]
     });
     this.app = app;
     this.shapesPerSecond = 1;
@@ -33702,7 +33816,16 @@ var App = exports.App = /*#__PURE__*/function () {
       textGravity.anchor.set(0, 0.5);
       textGravity.x = 500;
       textGravity.y = textArea.y;
-      this.textContent.addChild(textArea, textPerSecond, textGravity);
+      var textShapes = new _pixi.Text("Shapes being displayed: ".concat(this.numberOfShapes), {
+        fontSize: 16,
+        fill: "#E7CBCB",
+        align: "center",
+        resolution: 5
+      });
+      textShapes.anchor.set(0, 0.5);
+      textShapes.x = 770;
+      textShapes.y = textArea.y;
+      this.textContent.addChild(textArea, textPerSecond, textGravity, textShapes);
       this.app.stage.addChild(this.textContent);
     }
   }, {
@@ -33729,6 +33852,7 @@ var App = exports.App = /*#__PURE__*/function () {
       this.app.stage.children[1].children[0].text = "Covered area: ".concat(this.coveredArea);
       this.app.stage.children[1].children[1].text = "Shapes per second: ".concat(this.shapesPerSecond);
       this.app.stage.children[1].children[2].text = "Gravity value: ".concat(this.gravity);
+      this.app.stage.children[1].children[3].text = "Shapes being displayed: ".concat(this.numberOfShapes);
     }
   }, {
     key: "createEmptySprite",
@@ -33797,6 +33921,7 @@ var App = exports.App = /*#__PURE__*/function () {
   }, {
     key: "generateShapes",
     value: function generateShapes(containerSize, amount) {
+      console.log("GENERATED SHAPE");
       var ms = new Date().getTime();
       for (var i = 0; i < amount; i++) {
         var width = random(50, 200);
@@ -33834,6 +33959,7 @@ var App = exports.App = /*#__PURE__*/function () {
     value: function tick(containerSize, shouldGenerate) {
       // each second generate given amount of shapes and remove those, which are outside of the canvas
       if (shouldGenerate) {
+        console.log("GENERATED");
         this.generateShapes(containerSize, this.shapesPerSecond);
         this.removeFinishedShapes(containerSize, this.onRemoveShape);
       }
@@ -33867,24 +33993,34 @@ var App = exports.App = /*#__PURE__*/function () {
   }, {
     key: "numberOfShapes",
     get: function get() {
+      console.log(this.shapes.length);
       return this.shapes.length;
     }
   }]);
   return App;
 }();
 var renderCounter = 0;
-app.ticker.add(function () {
+var second = 0;
+app.ticker.add(function (delta) {
   var containerSize = {
     width: app.view.clientWidth,
     height: app.view.clientHeight
   };
-  var tickerInterval = app.ticker.deltaMS; // ~16.6667ms by default
-  var shouldGenerate = renderCounter * tickerInterval % 1000 < tickerInterval;
-  A.tick(containerSize, shouldGenerate);
+
+  // const tickerInterval = app.ticker.elapsedMS; // ~16.6667ms by default
+  // const shouldGenerate =
+  //   (renderCounter * tickerInterval) % 1000 < tickerInterval;
+
+  second += 1 / 60 * delta;
+  var toGenerate = second >= 1;
+  if (second >= 1) {
+    second = 0;
+  }
+  A.tick(containerSize, toGenerate);
   renderCounter++;
 });
 var A = new App(app);
-},{"./shape-types":"js/shape-types.js","pixi.js":"node_modules/pixi.js/lib/index.mjs"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./shape-types/triangle":"js/shape-types/triangle.js","./shape-types/ellipse":"js/shape-types/ellipse.js","./shape-types/circle":"js/shape-types/circle.js","./shape-types/hexagon":"js/shape-types/hexagon.js","./shape-types/pentagon":"js/shape-types/pentagon.js","./shape-types/rectangle":"js/shape-types/rectangle.js","pixi.js":"node_modules/pixi.js/lib/index.mjs"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -33909,7 +34045,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "12045" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49840" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

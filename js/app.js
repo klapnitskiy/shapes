@@ -1,11 +1,9 @@
-import {
-  Triangle,
-  Rectangle,
-  Circle,
-  Ellipse,
-  Pentagon,
-  Hexagon,
-} from "./shape-types";
+import { Triangle } from "./shape-types/triangle";
+import { Ellipse } from "./shape-types/ellipse";
+import { Circle } from "./shape-types/circle";
+import { Hexagon } from "./shape-types/hexagon";
+import { Pentagon } from "./shape-types/pentagon";
+import { Rectangle } from "./shape-types/rectangle";
 
 import { Application, Graphics, Sprite, RenderTexture, Text } from "pixi.js";
 
@@ -144,7 +142,21 @@ export class App {
     textGravity.x = 500;
     textGravity.y = textArea.y;
 
-    this.textContent.addChild(textArea, textPerSecond, textGravity);
+    const textShapes = new Text(
+      `Shapes being displayed: ${this.numberOfShapes}`,
+      {
+        fontSize: 16,
+        fill: "#E7CBCB",
+        align: "center",
+        resolution: 5,
+      }
+    );
+
+    textShapes.anchor.set(0, 0.5);
+    textShapes.x = 770;
+    textShapes.y = textArea.y;
+
+    this.textContent.addChild(textArea, textPerSecond, textGravity, textShapes);
 
     this.app.stage.addChild(this.textContent);
   }
@@ -173,6 +185,7 @@ export class App {
     this.app.stage.children[1].children[0].text = `Covered area: ${this.coveredArea}`;
     this.app.stage.children[1].children[1].text = `Shapes per second: ${this.shapesPerSecond}`;
     this.app.stage.children[1].children[2].text = `Gravity value: ${this.gravity}`;
+    this.app.stage.children[1].children[3].text = `Shapes being displayed: ${this.numberOfShapes}`;
   }
 
   createEmptySprite() {
@@ -228,6 +241,7 @@ export class App {
   }
 
   generateShapes(containerSize, amount) {
+    console.log("GENERATED SHAPE");
     const ms = new Date().getTime();
     for (let i = 0; i < amount; i++) {
       const width = random(50, 200);
@@ -261,6 +275,7 @@ export class App {
   tick(containerSize, shouldGenerate) {
     // each second generate given amount of shapes and remove those, which are outside of the canvas
     if (shouldGenerate) {
+      console.log("GENERATED");
       this.generateShapes(containerSize, this.shapesPerSecond);
       this.removeFinishedShapes(containerSize, this.onRemoveShape);
     }
@@ -292,23 +307,34 @@ export class App {
   }
 
   get numberOfShapes() {
+    console.log(this.shapes.length);
     return this.shapes.length;
   }
 }
 
 let renderCounter = 0;
 
-app.ticker.add(() => {
+let second = 0;
+
+app.ticker.add((delta) => {
   const containerSize = {
     width: app.view.clientWidth,
     height: app.view.clientHeight,
   };
 
-  const tickerInterval = app.ticker.deltaMS; // ~16.6667ms by default
-  const shouldGenerate =
-    (renderCounter * tickerInterval) % 1000 < tickerInterval;
+  // const tickerInterval = app.ticker.elapsedMS; // ~16.6667ms by default
+  // const shouldGenerate =
+  //   (renderCounter * tickerInterval) % 1000 < tickerInterval;
 
-  A.tick(containerSize, shouldGenerate);
+  second += (1 / 60) * delta;
+
+  const toGenerate = second >= 1;
+
+  if (second >= 1) {
+    second = 0;
+  }
+
+  A.tick(containerSize, toGenerate);
 
   renderCounter++;
 });
