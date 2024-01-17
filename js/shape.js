@@ -15,7 +15,6 @@ export class Shape {
     this.height = SHAPE_SIZE.HEIGHT;
     this.tint = this.generateColor() || 0xff3300;
     this.points = data.points || null;
-    console.log(this.points, "POINTS");
     this.sprite = data.sprite;
     this.x = data.x;
     this.y = data.y;

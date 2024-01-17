@@ -23,6 +23,22 @@ canvas {
 
 .controls {
   position: absolute;
+  left: 70px;
+  top: -15px;
+}
+
+.info-container {
+  position: absolute;
+  top: 15px;
+  width: 100%;
+
+  display: flex;
+  justify-content: space-between;
+}
+
+.info-container span {
+  font-size: 18px;
+  color: #e7cbcb;
 }
 
 .button {

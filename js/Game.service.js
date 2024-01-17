@@ -71,56 +71,94 @@ function addFields() {
   textArea.x = 10;
   textArea.y = this.textContent.height / 2;
 
-  const textPerSecond = new Text(
-    ` Shapes per second: ${this.shapesPerSecond}`,
-    {
-      fontSize: 16,
-      fill: "#E7CBCB",
-      align: "center",
-      resolution: 5,
-    }
-  );
+  // const textPerSecond = new Text(
+  //   ` Shapes per second: ${this.shapesPerSecond}`,
+  //   {
+  //     fontSize: 16,
+  //     fill: "#E7CBCB",
+  //     align: "center",
+  //     resolution: 5,
+  //   }
+  // );
 
-  textPerSecond.anchor.set(0, 0.5);
-  textPerSecond.x = 200;
-  textPerSecond.y = textArea.y;
+  // textPerSecond.anchor.set(0, 0.5);
+  // textPerSecond.x = 200;
+  // textPerSecond.y = textArea.y;
 
-  const textGravity = new Text(`Gravity value: ${this.gravity}`, {
-    fontSize: 16,
-    fill: "#E7CBCB",
-    align: "center",
-    resolution: 5,
-  });
+  // const textGravity = new Text(`Gravity value: ${this.gravity}`, {
+  //   fontSize: 16,
+  //   fill: "#E7CBCB",
+  //   align: "center",
+  //   resolution: 5,
+  // });
 
-  textGravity.anchor.set(0, 0.5);
-  textGravity.x = 500;
-  textGravity.y = textArea.y;
+  // textGravity.anchor.set(0, 0.5);
+  // textGravity.x = 500;
+  // textGravity.y = textArea.y;
 
-  const textShapes = new Text(
-    `Shapes being displayed: ${this.numberOfShapes}`,
-    {
-      fontSize: 16,
-      fill: "#E7CBCB",
-      align: "center",
-      resolution: 5,
-    }
-  );
+  // const textShapes = new Text(
+  //   `Shapes being displayed: ${this.numberOfShapes}`,
+  //   {
+  //     fontSize: 16,
+  //     fill: "#E7CBCB",
+  //     align: "center",
+  //     resolution: 5,
+  //   }
+  // );
 
-  textShapes.anchor.set(0, 0.5);
-  textShapes.x = 770;
-  textShapes.y = textArea.y;
+  // textShapes.anchor.set(0, 0.5);
+  // textShapes.x = 770;
+  // textShapes.y = textArea.y;
 
-  this.textContent.addChild(textArea, textPerSecond, textGravity, textShapes);
+  // this.textContent.addChild(textArea, textPerSecond, textGravity, textShapes);
 
   this.app.stage.addChild(this.textContent);
 }
 
+function addHtmlFields() {
+  const coveredArea = document.createElement("div");
+  coveredArea.classList.add("info-area");
+  const shapesPerSecond = document.createElement("div");
+  shapesPerSecond.classList.add("info-shapes_per_second");
+  const gravity = document.createElement("div");
+  gravity.classList.add("info-gravity");
+  const shapesDisplayed = document.createElement("div");
+  shapesDisplayed.classList.add("info-shapes_displayed");
+
+  const textArea = document.createElement("span");
+  textArea.classList.add("info-area_span");
+  textArea.innerText = `Covered area: ${this.coveredArea}`;
+  const textShapes = document.createElement("span");
+  textShapes.classList.add("info-shapes_span");
+  textShapes.innerText = `Shapes per second: ${this.shapesPerSecond}`;
+  const textGravity = document.createElement("span");
+  textGravity.classList.add("info-gravity_span");
+  textGravity.innerText = `Gravity: ${this.gravity}`;
+  const textDisplayed = document.createElement("span");
+  textDisplayed.classList.add("info-displayed_span");
+  textDisplayed.innerText = `Shapes being displayed: ${this.numberOfShapes}`;
+
+  coveredArea.appendChild(textArea);
+  shapesPerSecond.appendChild(textShapes);
+  gravity.appendChild(textGravity);
+  shapesDisplayed.appendChild(textDisplayed);
+
+  this.infoContainer.insertAdjacentElement("beforeend", coveredArea);
+  this.infoContainer.insertAdjacentElement("beforeend", shapesPerSecond);
+  this.infoContainer.insertAdjacentElement("beforeend", gravity);
+  this.infoContainer.insertAdjacentElement("beforeend", textDisplayed);
+}
+
 //updates textContent inside header
-function updateT() {
-  this.app.stage.children[1].children[0].text = `Covered area: ${this.coveredArea}`;
-  this.app.stage.children[1].children[1].text = `Shapes per second: ${this.shapesPerSecond}`;
-  this.app.stage.children[1].children[2].text = `Gravity value: ${this.gravity}`;
-  this.app.stage.children[1].children[3].text = `Shapes being displayed: ${this.numberOfShapes}`;
+function updateHtmlText() {
+  const textArea = document.querySelector(".info-area_span");
+  textArea.innerHTML = `Covered area: ${this.coveredArea}`;
+  const textShapes = document.querySelector(".info-shapes_span");
+  textShapes.innerHTML = `Shapes per second: ${this.shapesPerSecond}`;
+  const textGravity = document.querySelector(".info-gravity_span");
+  textGravity.innerHTML = `Gravity: ${this.gravity}`;
+  const textDisplayed = document.querySelector(".info-displayed_span");
+  textDisplayed.innerHTML = `Shapes being displayed: ${this.numberOfShapes}`;
 }
 
 //creates sprite without params after adding shape
@@ -217,7 +255,8 @@ function tick(containerSize, shouldGenerate) {
     this.removeFinishedShapes(containerSize, this.onRemoveShape);
   }
   // move shapes and update stats
-  this.updateT();
+  // this.updateT();
+  this.updateHtmlText();
   this.moveShapes();
 }
 
@@ -238,7 +277,9 @@ export const AppService = {
   addButton,
   addBackground,
   addFields,
+  addHtmlFields,
   updateT,
+  updateHtmlText,
   moveShapes,
   tick,
 };

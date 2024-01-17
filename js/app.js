@@ -9,7 +9,6 @@ import { AppService, ShapeService } from "./Game.service.js";
 
 export class App {
   shapeClasses = [Triangle, Rectangle, Circle, Ellipse, Pentagon, Hexagon];
-  // shapeClasses = [Triangle];
 
   constructor(app) {
     this.app = app;
@@ -17,25 +16,12 @@ export class App {
     this.shapesPerSecond = 1;
     this.gravity = 1;
     this.shapes = [];
+    this.infoContainer = document.querySelector(".info-container");
     this.buttonContainer = document.querySelector(".controls");
 
     this.addBackground();
     this.addFields();
-    this.addButton(
-      "ADD",
-      () => {
-        this.gravity++;
-      },
-      { x: 635, y: 5 }
-    );
-    this.addButton(
-      "SUB",
-      () => {
-        if (this.gravity <= 1) return;
-        this.gravity--;
-      },
-      { x: 685, y: 5 }
-    );
+    this.addHtmlFields();
 
     this.addHtmlButton(
       "ADD",
@@ -54,6 +40,23 @@ export class App {
       { x: 390, y: 5 }
     );
 
+    this.addHtmlButton(
+      "ADD",
+      () => {
+        this.gravity++;
+      },
+      { x: 515, y: 5 }
+    );
+
+    this.addHtmlButton(
+      "SUB",
+      () => {
+        if (this.gravity <= 1) return;
+        this.gravity--;
+      },
+      { x: 525, y: 5 }
+    );
+
     this.addShape = this.addShape.bind(this);
     this.removeShape = this.removeShape.bind(this);
     this.onRemoveShape = this.onRemoveShape.bind(this);
@@ -67,6 +70,10 @@ export class App {
 
   addFields() {
     AppService.addFields.apply(this);
+  }
+
+  addHtmlFields() {
+    AppService.addHtmlFields.apply(this);
   }
 
   addHtmlButton(innerText, callback, position) {
@@ -86,8 +93,8 @@ export class App {
     AppService.addButton.call(this, innerText, callback, position);
   }
 
-  updateT() {
-    AppService.updateT.apply(this);
+  updateHtmlText() {
+    AppService.updateHtmlText.apply(this);
   }
 
   createEmptySprite() {
