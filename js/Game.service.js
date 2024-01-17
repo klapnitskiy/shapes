@@ -255,7 +255,6 @@ function tick(containerSize, shouldGenerate) {
     this.removeFinishedShapes(containerSize, this.onRemoveShape);
   }
   // move shapes and update stats
-  // this.updateT();
   this.updateHtmlText();
   this.moveShapes();
 }
@@ -278,7 +277,6 @@ export const AppService = {
   addBackground,
   addFields,
   addHtmlFields,
-  updateT,
   updateHtmlText,
   moveShapes,
   tick,
