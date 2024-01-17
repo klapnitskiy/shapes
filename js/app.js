@@ -19,16 +19,13 @@ export class App {
     this.infoContainer = document.querySelector(".info-container");
     this.buttonContainer = document.querySelector(".controls");
 
-    this.addBackground();
-    this.addFields();
-    this.addHtmlFields();
-
     this.addHtmlButton(
       "ADD",
       () => {
         this.shapesPerSecond++;
       },
-      { x: 380, y: 5 }
+      { x: 0, y: 0 },
+      "btn-shape_add"
     );
 
     this.addHtmlButton(
@@ -37,7 +34,8 @@ export class App {
         if (this.shapesPerSecond <= 0) return;
         this.shapesPerSecond--;
       },
-      { x: 390, y: 5 }
+      { x: 0, y: 0 },
+      "btn-shape_sub"
     );
 
     this.addHtmlButton(
@@ -45,7 +43,8 @@ export class App {
       () => {
         this.gravity++;
       },
-      { x: 515, y: 5 }
+      { x: 0, y: 0 },
+      "btn-gravity_add"
     );
 
     this.addHtmlButton(
@@ -54,8 +53,13 @@ export class App {
         if (this.gravity <= 1) return;
         this.gravity--;
       },
-      { x: 525, y: 5 }
+      { x: 0, y: 0 },
+      "btn-gravity_sub"
     );
+
+    this.addBackground();
+    this.addFields();
+    this.addHtmlFields();
 
     this.addShape = this.addShape.bind(this);
     this.removeShape = this.removeShape.bind(this);
@@ -76,9 +80,10 @@ export class App {
     AppService.addHtmlFields.apply(this);
   }
 
-  addHtmlButton(innerText, callback, position) {
+  addHtmlButton(innerText, callback, position, classname) {
     const btn = document.createElement("button");
-    btn.classList.add("button");
+    btn.classList.add(`${classname}`, "button");
+    // btn.classList.add("button");
 
     btn.innerText = innerText;
 

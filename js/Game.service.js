@@ -71,47 +71,6 @@ function addFields() {
   textArea.x = 10;
   textArea.y = this.textContent.height / 2;
 
-  // const textPerSecond = new Text(
-  //   ` Shapes per second: ${this.shapesPerSecond}`,
-  //   {
-  //     fontSize: 16,
-  //     fill: "#E7CBCB",
-  //     align: "center",
-  //     resolution: 5,
-  //   }
-  // );
-
-  // textPerSecond.anchor.set(0, 0.5);
-  // textPerSecond.x = 200;
-  // textPerSecond.y = textArea.y;
-
-  // const textGravity = new Text(`Gravity value: ${this.gravity}`, {
-  //   fontSize: 16,
-  //   fill: "#E7CBCB",
-  //   align: "center",
-  //   resolution: 5,
-  // });
-
-  // textGravity.anchor.set(0, 0.5);
-  // textGravity.x = 500;
-  // textGravity.y = textArea.y;
-
-  // const textShapes = new Text(
-  //   `Shapes being displayed: ${this.numberOfShapes}`,
-  //   {
-  //     fontSize: 16,
-  //     fill: "#E7CBCB",
-  //     align: "center",
-  //     resolution: 5,
-  //   }
-  // );
-
-  // textShapes.anchor.set(0, 0.5);
-  // textShapes.x = 770;
-  // textShapes.y = textArea.y;
-
-  // this.textContent.addChild(textArea, textPerSecond, textGravity, textShapes);
-
   this.app.stage.addChild(this.textContent);
 }
 
@@ -124,6 +83,12 @@ function addHtmlFields() {
   gravity.classList.add("info-gravity");
   const shapesDisplayed = document.createElement("div");
   shapesDisplayed.classList.add("info-shapes_displayed");
+
+  const gravityBtnAdd = document.querySelector(".btn-gravity_add");
+  const gravityBtnSub = document.querySelector(".btn-gravity_sub");
+
+  const shapeBtnAdd = document.querySelector(".btn-shape_add");
+  const shapeBtnSub = document.querySelector(".btn-shape_sub");
 
   const textArea = document.createElement("span");
   textArea.classList.add("info-area_span");
@@ -139,8 +104,9 @@ function addHtmlFields() {
   textDisplayed.innerText = `Shapes being displayed: ${this.numberOfShapes}`;
 
   coveredArea.appendChild(textArea);
-  shapesPerSecond.appendChild(textShapes);
-  gravity.appendChild(textGravity);
+  // shapesPerSecond.appendChild(textShapes);
+  shapesPerSecond.append(textShapes, shapeBtnAdd, shapeBtnSub);
+  gravity.append(textGravity, gravityBtnAdd, gravityBtnSub);
   shapesDisplayed.appendChild(textDisplayed);
 
   this.infoContainer.insertAdjacentElement("beforeend", coveredArea);
